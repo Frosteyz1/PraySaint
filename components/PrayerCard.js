@@ -60,7 +60,7 @@ function drawCross(ctx, cx, cy, size, color, alpha = 1) {
 function drawDivineRays(ctx, cx, W, H) {
   const rayCount = 14;
   for (let i = 0; i < rayCount; i++) {
-    const angle = (i / rayCount) * Math.PI + Math.PI / 2; // spread downward from top
+    const angle = (i / rayCount) * Math.PI + Math.PI / 2;
     const len   = Math.max(W, H) * 1.2;
     const x2    = cx + Math.cos(angle) * len;
     const y2    = -30 + Math.sin(angle) * len;
@@ -83,7 +83,6 @@ function drawDivineRays(ctx, cx, W, H) {
 function drawSaintCard(canvas, data) {
   if (!canvas || !data) return;
 
-  // Display dimensions
   const displayW = 760;
   const displayH = 440;
   const { ctx, W, H } = setupHiDPI(canvas, displayW, displayH);
@@ -161,35 +160,69 @@ function drawSaintCard(canvas, data) {
     ctx.restore();
   }
 
-  /* ── Virtues / Powers ── */
-  const allPowers = saints.flatMap((s) => s.powers || []).slice(0, 5);
+  /* ── Virtues / Powers (truncate to fit in one line) ── */
+  const allPowers = saints.flatMap((s) => s.powers || []).slice(0, 6);
   if (allPowers.length) {
     ctx.save();
     ctx.font      = "11px Arial, sans-serif";
     ctx.fillStyle = "rgba(167,186,255,0.85)";
     ctx.textAlign = "center";
-    ctx.fillText(allPowers.join("  ·  "), W / 2, 138);
+    const maxPowersW = W - 80;
+    // Trim powers until they fit in one line
+    let displayPowers = [...allPowers];
+    while (displayPowers.length > 1 && ctx.measureText(displayPowers.join("  ·  ")).width > maxPowersW) {
+      displayPowers.pop();
+    }
+    const powersText = displayPowers.length < allPowers.length
+      ? displayPowers.join("  ·  ") + "  · …"
+      : displayPowers.join("  ·  ");
+    // Final check — if still too wide, clip via canvas clip region
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(40, 128, W - 80, 20);
+    ctx.clip();
+    ctx.fillText(powersText, W / 2, 138);
+    ctx.restore();
     ctx.restore();
   }
 
-  /* ── Prayer text (multi-line) ── */
+  /* ── Prayer text — dynamic font size ── */
   const prayer = data.teamPrayer || "";
-  ctx.save();
-  ctx.font      = "italic 12.5px 'Playfair Display', Georgia, serif";
-  ctx.fillStyle = "rgba(240,232,213,0.88)";
-  ctx.textAlign = "center";
-  const pLines  = wrapText(ctx, prayer, W - 100);
-  pLines.slice(0, 9).forEach((line, i) => {
-    ctx.fillText(line, W / 2, 162 + i * 18);
-  });
-  ctx.restore();
+  if (prayer) {
+    ctx.save();
+    ctx.fillStyle = "rgba(240,232,213,0.88)";
+    ctx.textAlign = "center";
+
+    const prayerStartY = 155;
+    const prayerEndY   = H - 30;
+    const maxPrayerH   = prayerEndY - prayerStartY;
+    const maxPrayerW   = W - 100;
+
+    // Find the largest font size where all lines fit vertically
+    let fontSize = 17;
+    let pLines, lineH, totalH;
+    for (; fontSize >= 10; fontSize -= 0.5) {
+      ctx.font = `${fontSize}px 'Playfair Display', Georgia, serif`;
+      lineH  = fontSize * 1.62;
+      pLines = wrapText(ctx, prayer, maxPrayerW);
+      totalH = pLines.length * lineH;
+      if (totalH <= maxPrayerH) break;
+    }
+
+    // Vertically center the prayer block
+    const blockStartY = prayerStartY + (maxPrayerH - totalH) / 2 + fontSize;
+    pLines.forEach((line, i) => {
+      ctx.fillText(line, W / 2, blockStartY + i * lineH);
+    });
+    ctx.restore();
+  }
 
   /* ── Watermark ── */
   ctx.save();
   ctx.font      = "10px Arial, sans-serif";
   ctx.fillStyle = "rgba(212,160,23,0.45)";
   ctx.textAlign = "right";
-  ctx.fillText("✝ PatronForge · Grow Closer to God", W - 22, H - 16);
+  ctx.fillText("✝ PraySaint · Grow Closer to God", W - 22, H - 16);
   ctx.restore();
 }
 
@@ -206,7 +239,6 @@ const PrayerCard = forwardRef(function PrayerCard({ data }, ref) {
   return (
     <canvas
       ref={canvasRef}
-      /* Physical dimensions set by setupHiDPI; these are fallback display sizes */
       width={760}
       height={440}
       className="w-full rounded-2xl"

@@ -15,13 +15,13 @@ const btnBase = {
   whiteSpace: "nowrap",
 };
 
-export default function ShareButton({ canvasRef, title, shareText, hashtag = "PatronForge" }) {
+export default function ShareButton({ canvasRef, title, shareText, hashtag = "PraySaint" }) {
 
   async function downloadPNG() {
     if (!canvasRef?.current) return;
     const canvas = canvasRef.current;
     const link = document.createElement("a");
-    link.download = `patronforge-${Date.now()}.png`;
+    link.download = `praysaint-${Date.now()}.png`;
     link.href = canvas.toDataURL("image/png");
     link.click();
   }
@@ -32,14 +32,14 @@ export default function ShareButton({ canvasRef, title, shareText, hashtag = "Pa
       const html2canvas = (await import("html2canvas")).default;
       const captured = await html2canvas(canvasRef.current, { useCORS: true, scale: 2 });
       const link = document.createElement("a");
-      link.download = `patronforge-${Date.now()}.png`;
+      link.download = `praysaint-${Date.now()}.png`;
       link.href = captured.toDataURL("image/png");
       link.click();
     } catch { downloadPNG(); }
   }
 
   function shareToX() {
-    const text = encodeURIComponent(`${shareText || title} #${hashtag} — Grow closer to God at PatronForge!`);
+    const text = encodeURIComponent(`${shareText || title} #${hashtag} — Grow closer to God at PraySaint!`);
     window.open(`https://x.com/intent/tweet?text=${text}`, "_blank", "noopener,noreferrer");
   }
 
