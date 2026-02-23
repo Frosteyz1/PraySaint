@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import ShareButton from "@/components/ShareButton";
 import ReflectionPrompt from "@/components/ReflectionPrompt";
 
@@ -543,10 +544,15 @@ export default function RosaryPage() {
         )}
       </section>
 
-      {/* ── Mystery selector tabs ─────────────────────────────────── */}
-      <div style={{ background: "var(--bg-surface)", borderBottom: "1px solid var(--border)", position: "sticky", top: "56px", zIndex: 10 }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px" }}>
-          <div style={{ display: "flex", gap: "0", overflowX: "auto" }} role="tablist" aria-label="Rosary mystery sets">
+      {/* ── Mystery selector tabs — ENHANCED ─────────────────────── */}
+      <div style={{
+        background: "var(--bg-surface)",
+        borderBottom: "1px solid var(--border)",
+        position: "sticky", top: "56px", zIndex: 10,
+        boxShadow: "0 4px 24px rgba(0,0,0,0.18)",
+      }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 16px" }}>
+          <div style={{ display: "flex", gap: "8px", overflowX: "auto", padding: "12px 0" }} role="tablist" aria-label="Rosary mystery sets">
             {MYSTERY_NAMES.map((name) => {
               const set = MYSTERY_SETS[name];
               const isActive = selectedMystery === name;
@@ -557,20 +563,42 @@ export default function RosaryPage() {
                   aria-selected={isActive}
                   onClick={() => selectMystery(name)}
                   style={{
+                    flex: "1 0 auto",
+                    minWidth: "130px",
                     padding: "14px 20px",
-                    background: "none",
-                    border: "none",
-                    borderBottom: isActive ? `2px solid ${set.color}` : "2px solid transparent",
+                    background: isActive
+                      ? `linear-gradient(135deg, ${set.color}22, ${set.color}0a)`
+                      : "transparent",
+                    border: isActive
+                      ? `1.5px solid ${set.color}66`
+                      : "1.5px solid rgba(255,255,255,0.08)",
+                    borderRadius: "14px",
                     cursor: "pointer",
-                    transition: "all 0.18s ease",
+                    transition: "all 0.22s ease",
                     whiteSpace: "nowrap",
-                    fontSize: "0.88rem",
+                    fontSize: "0.92rem",
                     fontWeight: isActive ? 700 : 500,
                     color: isActive ? set.color : "var(--fg-muted)",
+                    boxShadow: isActive ? `0 0 18px ${set.color}25, inset 0 1px 0 rgba(255,255,255,0.08)` : "none",
+                    textAlign: "center",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.borderColor = `${set.color}44`;
+                      e.currentTarget.style.color = set.color;
+                      e.currentTarget.style.background = `${set.color}0d`;
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+                      e.currentTarget.style.color = "var(--fg-muted)";
+                      e.currentTarget.style.background = "transparent";
+                    }
                   }}
                 >
                   {name}
-                  <span style={{ display: "block", fontSize: "9px", letterSpacing: "0.05em", marginTop: "2px", color: isActive ? set.color : "var(--fg-muted)", opacity: 0.7 }}>
+                  <span style={{ display: "block", fontSize: "10px", letterSpacing: "0.06em", marginTop: "3px", color: isActive ? `${set.color}cc` : "var(--fg-muted)", opacity: 0.85 }}>
                     {set.days}
                   </span>
                 </button>
@@ -586,29 +614,38 @@ export default function RosaryPage() {
 
           {/* LEFT: Rosary canvas */}
           <div>
-            {/* Progress bar */}
+            {/* Progress bar + bead counter */}
             {!complete && (
-              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px", fontSize: "11px", color: "var(--fg-muted)", fontWeight: 600 }}>
-                <span style={{ whiteSpace: "nowrap" }}>
-                  {isPreLoop
-                    ? ["Crucifix", "Our Father", "Hail Mary 1", "Hail Mary 2", "Hail Mary 3", "Glory Be"][currentStep]
-                    : posInDecade === 0
-                      ? `Decade ${decadeIndex + 1} · Our Father`
-                      : posInDecade === 11
-                        ? `Decade ${decadeIndex + 1} · Glory Be`
-                        : `Decade ${decadeIndex + 1} · Hail Mary ${posInDecade}`}
-                </span>
-                <div style={{ flex: 1, height: "5px", borderRadius: "999px", background: "var(--border)", overflow: "hidden" }}>
-                  <div
-                    style={{ height: "100%", borderRadius: "999px", background: `linear-gradient(90deg, ${accentColor}, #f0c040)`, width: `${progress}%`, transition: "width 0.3s ease" }}
-                    role="progressbar"
-                    aria-valuenow={progress}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                    aria-label={`Rosary progress: ${progress}%`}
-                  />
+              <div style={{ marginBottom: "16px" }}>
+                {/* Bead counter */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+                  <span style={{ fontSize: "12px", fontWeight: 700, color: accentColor }}>
+                    {isPreLoop
+                      ? ["✝ Crucifix", "1. Our Father", "2. Hail Mary (Faith)", "3. Hail Mary (Hope)", "4. Hail Mary (Charity)", "5. Glory Be"][currentStep]
+                      : posInDecade === 0
+                        ? `Decade ${decadeIndex + 1} — Our Father`
+                        : posInDecade === 11
+                          ? `Decade ${decadeIndex + 1} — Glory Be + Fatima`
+                          : `Decade ${decadeIndex + 1} — Hail Mary ${posInDecade} of 10`}
+                  </span>
+                  <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--fg-muted)", background: "var(--bg-elevated)", border: "1px solid var(--border)", borderRadius: "8px", padding: "3px 9px" }}>
+                    Step {currentStep + 1} / {TOTAL_STEPS}
+                  </span>
                 </div>
-                <span>{progress}%</span>
+                {/* Progress bar */}
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", fontSize: "11px", color: "var(--fg-muted)", fontWeight: 600 }}>
+                  <div style={{ flex: 1, height: "6px", borderRadius: "999px", background: "var(--border)", overflow: "hidden" }}>
+                    <div
+                      style={{ height: "100%", borderRadius: "999px", background: `linear-gradient(90deg, ${accentColor}, #f0c040)`, width: `${progress}%`, transition: "width 0.3s ease", boxShadow: `0 0 8px ${accentColor}66` }}
+                      role="progressbar"
+                      aria-valuenow={progress}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-label={`Rosary progress: ${progress}%`}
+                    />
+                  </div>
+                  <span style={{ fontWeight: 700, color: accentColor, minWidth: "36px", textAlign: "right" }}>{progress}%</span>
+                </div>
               </div>
             )}
 
@@ -926,6 +963,25 @@ export default function RosaryPage() {
             </details>
 
           </div>
+        </div>
+      </div>
+
+      {/* ── Novena link ────────────────────────────────────────────── */}
+      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px 48px", textAlign: "center" }}>
+        <div style={{
+          display: "inline-flex", alignItems: "center", gap: "12px",
+          padding: "14px 24px",
+          borderRadius: "16px",
+          background: "rgba(212,160,23,0.07)",
+          border: "1px solid rgba(212,160,23,0.18)",
+        }}>
+          <span style={{ fontSize: "1.2rem" }}>🕯</span>
+          <p style={{ fontSize: "0.88rem", color: "var(--fg-secondary)" }}>
+            Want to go deeper?{" "}
+            <a href="/novenas" style={{ color: "#d4a017", fontWeight: 700, textDecoration: "none" }}>
+              Continue with a 9-Day Novena →
+            </a>
+          </p>
         </div>
       </div>
 

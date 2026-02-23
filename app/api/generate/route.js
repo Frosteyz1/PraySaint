@@ -1,11 +1,26 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 
-// NOTE: Use CLAUDE_API_KEY (no NEXT_PUBLIC prefix) in production to avoid
-// exposing the key in the client bundle. NEXT_PUBLIC_ vars are embedded client-side.
-const client = new Anthropic({
-  apiKey: process.env.NEXT_PUBLIC_CLAUDE_API_KEY,
-});
+// ─── VERCEL ENV SETUP NOTE ─────────────────────────────────────────
+// In Vercel dashboard → Project Settings → Environment Variables, add:
+//   Key:   CLAUDE_API_KEY
+//   Value: sk-ant-...
+//   Environment: Production, Preview, Development
+//
+// DO NOT use NEXT_PUBLIC_ prefix — that exposes the key in client bundles.
+// The route.js file runs server-side only, so CLAUDE_API_KEY is safe here.
+// If you previously used NEXT_PUBLIC_CLAUDE_API_KEY, add BOTH during migration.
+
+const apiKey = process.env.CLAUDE_API_KEY || process.env.NEXT_PUBLIC_CLAUDE_API_KEY;
+
+if (!apiKey) {
+  console.error(
+    "[PatronForge API] ⚠️  No API key found! Set CLAUDE_API_KEY in Vercel Environment Variables. " +
+    "Go to Vercel Dashboard → Project → Settings → Environment Variables."
+  );
+}
+
+const client = new Anthropic({ apiKey });
 
 const MODEL = "claude-sonnet-4-6";
 const MAX_TOKENS = 4000;
@@ -118,11 +133,25 @@ Return the JSON exactly as specified.`;
 
 // ─── Route handler ─────────────────────────────────────────────────
 export async function POST(request) {
+  const requestId = Math.random().toString(36).slice(2, 8);
+  console.log(`[PatronForge API][${requestId}] POST /api/generate received`);
+
   try {
+    // Check API key early
+    if (!apiKey) {
+      console.error(`[PatronForge API][${requestId}] ❌ Missing CLAUDE_API_KEY environment variable.`);
+      return NextResponse.json(
+        { error: "Server configuration error: API key not set. Check Vercel environment variables." },
+        { status: 500 }
+      );
+    }
+
     const body = await request.json();
     const { type } = body;
+    console.log(`[PatronForge API][${requestId}] Request type: ${type}`);
 
     if (!["saints", "rosary", "memes"].includes(type)) {
+      console.warn(`[PatronForge API][${requestId}] Invalid type: ${type}`);
       return NextResponse.json({ error: "Invalid type. Use saints | rosary | memes." }, { status: 400 });
     }
 
@@ -143,7 +172,8 @@ export async function POST(request) {
         break;
     }
 
-    // Single API call per forge — stream for timeout safety
+    console.log(`[PatronForge API][${requestId}] Calling Claude ${MODEL}...`);
+
     const stream = client.messages.stream({
       model: MODEL,
       max_tokens: MAX_TOKENS,
@@ -153,14 +183,16 @@ export async function POST(request) {
 
     const response = await stream.finalMessage();
     const text = response.content.find((b) => b.type === "text")?.text ?? "";
+    console.log(`[PatronForge API][${requestId}] Claude responded. Input tokens: ${response.usage?.input_tokens}, Output tokens: ${response.usage?.output_tokens}`);
 
-    // Parse JSON from response
     let parsed;
     try {
-      // Strip any accidental markdown fences
       const cleaned = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
       parsed = JSON.parse(cleaned);
-    } catch {
+      console.log(`[PatronForge API][${requestId}] ✅ JSON parsed successfully`);
+    } catch (parseErr) {
+      console.error(`[PatronForge API][${requestId}] ❌ JSON parse error:`, parseErr.message);
+      console.error(`[PatronForge API][${requestId}] Raw response (first 500 chars):`, text.slice(0, 500));
       return NextResponse.json(
         { error: "AI returned invalid JSON. Please try again.", raw: text },
         { status: 502 }
@@ -168,14 +200,31 @@ export async function POST(request) {
     }
 
     return NextResponse.json({ data: parsed, type });
+
   } catch (err) {
     const status = err?.status ?? 500;
+    console.error(`[PatronForge API][${requestId}] ❌ Error (status ${status}):`, err?.message || err);
+    console.error(`[PatronForge API][${requestId}] Error details:`, {
+      name: err?.name,
+      status: err?.status,
+      headers: err?.headers,
+      error: err?.error,
+    });
+
+    if (status === 401) {
+      console.error(`[PatronForge API][${requestId}] 🔑 401 Unauthorized — Check that CLAUDE_API_KEY is correctly set in Vercel Environment Variables and the key is valid.`);
+    }
+    if (status === 429) {
+      console.error(`[PatronForge API][${requestId}] ⏱ 429 Rate Limited — Too many requests. Wait before retrying.`);
+    }
+
     const message =
       status === 401
-        ? "Invalid API key. Check your NEXT_PUBLIC_CLAUDE_API_KEY."
+        ? "Invalid API key. Check your CLAUDE_API_KEY in Vercel environment variables."
         : status === 429
         ? "Rate limited. Please wait a moment and try again."
         : "Something went wrong. Please try again.";
+
     return NextResponse.json({ error: message }, { status });
   }
 }

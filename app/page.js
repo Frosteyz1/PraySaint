@@ -47,20 +47,20 @@ function CrossSVG({ size = 48 }) {
   );
 }
 
-/* ─── Mock saint card for hero ───────────────────────────────────── */
+/* ─── Mock saint card for hero — ENLARGED ───────────────────────── */
 function MockSaintCard() {
   return (
     <div
       className="animate-card-float"
       style={{
         background: "linear-gradient(160deg, #08122e, #0f2040 60%, #12285a)",
-        border: "1px solid rgba(212,160,23,0.35)",
-        borderRadius: "22px",
-        padding: "30px 28px 24px",
-        boxShadow: "0 40px 100px rgba(0,0,0,0.65), 0 0 0 1px rgba(212,160,23,0.1), inset 0 1px 0 rgba(255,255,255,0.06)",
+        border: "1px solid rgba(212,160,23,0.40)",
+        borderRadius: "24px",
+        padding: "38px 36px 32px",
+        boxShadow: "0 48px 120px rgba(0,0,0,0.70), 0 0 0 1px rgba(212,160,23,0.15), 0 0 60px rgba(212,160,23,0.12), inset 0 1px 0 rgba(255,255,255,0.07)",
         position: "relative",
         overflow: "hidden",
-        maxWidth: "380px",
+        maxWidth: "460px",
         width: "100%",
       }}
     >
@@ -69,7 +69,7 @@ function MockSaintCard() {
         aria-hidden="true"
         style={{
           position: "absolute", inset: 0,
-          background: "conic-gradient(from -10deg at 50% -20%, rgba(212,160,23,0.07) 0deg, transparent 20deg, transparent 40deg, rgba(212,160,23,0.04) 60deg, transparent 80deg, transparent 100deg, rgba(212,160,23,0.06) 120deg, transparent 160deg, transparent 200deg, rgba(212,160,23,0.05) 230deg, transparent 260deg, transparent 340deg, rgba(212,160,23,0.07) 360deg)",
+          background: "conic-gradient(from -10deg at 50% -20%, rgba(212,160,23,0.08) 0deg, transparent 20deg, transparent 40deg, rgba(212,160,23,0.05) 60deg, transparent 80deg, transparent 100deg, rgba(212,160,23,0.07) 120deg, transparent 160deg, transparent 200deg, rgba(212,160,23,0.06) 230deg, transparent 260deg, transparent 340deg, rgba(212,160,23,0.08) 360deg)",
           pointerEvents: "none",
         }}
       />
@@ -77,52 +77,64 @@ function MockSaintCard() {
       <div
         aria-hidden="true"
         style={{
-          position: "absolute", top: 0, left: 0, right: 0, height: "120px",
-          background: "radial-gradient(ellipse 80% 100% at 50% 0%, rgba(212,160,23,0.12) 0%, transparent 70%)",
+          position: "absolute", top: 0, left: 0, right: 0, height: "150px",
+          background: "radial-gradient(ellipse 80% 100% at 50% 0%, rgba(212,160,23,0.15) 0%, transparent 70%)",
           pointerEvents: "none",
         }}
       />
 
       {/* Gold accent bar */}
-      <div style={{ height: "2px", background: "linear-gradient(90deg, transparent, #d4a017 30%, #f0c040 50%, #d4a017 70%, transparent)", borderRadius: "2px", marginBottom: "22px" }} />
+      <div style={{ height: "2px", background: "linear-gradient(90deg, transparent, #d4a017 30%, #f0c040 50%, #d4a017 70%, transparent)", borderRadius: "2px", marginBottom: "26px" }} />
 
       {/* Team name */}
-      <p style={{ fontFamily: "Playfair Display, serif", fontSize: "11px", fontStyle: "italic", color: "rgba(212,160,23,0.7)", textAlign: "center", letterSpacing: "0.08em", marginBottom: "14px" }}>
+      <p style={{ fontFamily: "Playfair Display, serif", fontSize: "12px", fontStyle: "italic", color: "rgba(212,160,23,0.75)", textAlign: "center", letterSpacing: "0.09em", marginBottom: "16px" }}>
         Your Heavenly Team of Consolation
       </p>
 
-      {/* Saint names */}
+      {/* Saint image placeholder */}
       <div style={{ textAlign: "center", marginBottom: "16px" }}>
+        <div style={{
+          display: "inline-flex", alignItems: "center", justifyContent: "center",
+          width: "72px", height: "72px", borderRadius: "50%",
+          background: "radial-gradient(circle at 35% 35%, rgba(212,160,23,0.3), rgba(212,160,23,0.08))",
+          border: "2px solid rgba(212,160,23,0.35)",
+          fontSize: "30px",
+          boxShadow: "0 0 20px rgba(212,160,23,0.25)",
+        }} aria-hidden="true">✝</div>
+      </div>
+
+      {/* Saint names */}
+      <div style={{ textAlign: "center", marginBottom: "18px" }}>
         {["Saint Dymphna of Gheel", "Saint Thérèse of Lisieux", "Saint Benedict Joseph Labre"].map((name) => (
-          <p key={name} style={{ fontFamily: "Playfair Display, serif", fontSize: "13.5px", fontStyle: "italic", color: "#f0e8d5", marginBottom: "5px", letterSpacing: "0.01em" }}>
+          <p key={name} style={{ fontFamily: "Playfair Display, serif", fontSize: "14px", fontStyle: "italic", color: "#f0e8d5", marginBottom: "6px", letterSpacing: "0.01em" }}>
             ✦ {name}
           </p>
         ))}
       </div>
 
       {/* Tags */}
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", justifyContent: "center", marginBottom: "16px" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", justifyContent: "center", marginBottom: "18px" }}>
         {["Patron of anxiety", "The Little Way", "Mental healing", "Hope for the poor"].map((tag) => (
-          <span key={tag} style={{ background: "rgba(212,160,23,0.12)", border: "1px solid rgba(212,160,23,0.25)", color: "#d4a017", fontSize: "10px", padding: "3px 9px", borderRadius: "999px" }}>
+          <span key={tag} style={{ background: "rgba(212,160,23,0.14)", border: "1px solid rgba(212,160,23,0.28)", color: "#d4a017", fontSize: "11px", padding: "4px 10px", borderRadius: "999px" }}>
             {tag}
           </span>
         ))}
       </div>
 
       {/* Cross divider */}
-      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
         <div style={{ flex: 1, height: "1px", background: "linear-gradient(to right, transparent, rgba(212,160,23,0.3))" }} />
-        <span style={{ color: "rgba(212,160,23,0.5)", fontSize: "10px" }}>✝</span>
+        <span style={{ color: "rgba(212,160,23,0.5)", fontSize: "11px" }}>✝</span>
         <div style={{ flex: 1, height: "1px", background: "linear-gradient(to left, transparent, rgba(212,160,23,0.3))" }} />
       </div>
 
       {/* Prayer text */}
-      <p style={{ fontFamily: "Playfair Display, serif", fontStyle: "italic", fontSize: "11.5px", lineHeight: "1.9", color: "rgba(240,232,213,0.7)", textAlign: "center" }}>
+      <p style={{ fontFamily: "Playfair Display, serif", fontStyle: "italic", fontSize: "12px", lineHeight: "1.95", color: "rgba(240,232,213,0.72)", textAlign: "center" }}>
         "Lord, through the intercession of these blessed saints, grant us peace and courage in our struggle, that we may trust in Your divine providence…"
       </p>
 
       {/* Watermark */}
-      <p style={{ fontSize: "9px", color: "rgba(212,160,23,0.3)", textAlign: "center", marginTop: "16px", letterSpacing: "0.15em", textTransform: "uppercase" }}>
+      <p style={{ fontSize: "9px", color: "rgba(212,160,23,0.35)", textAlign: "center", marginTop: "18px", letterSpacing: "0.15em", textTransform: "uppercase" }}>
         PraySaint · Grow Closer to God
       </p>
     </div>
@@ -151,12 +163,13 @@ const HOW_IT_WORKS = [
   },
 ];
 
+/* NOTE: Catholic Meme tile intentionally removed from homepage (feature still available at /memes) */
 const FEATURES = [
-  { href: "/saints", emoji: "⚔", title: "Saint Ally Builder", desc: "Receive a matched team of real patron saints with historically accurate backstories, virtues, and a custom novena prayer.", accent: "#d4a017", cta: "Find My Saints" },
-  { href: "/rosary", emoji: "📿", title: "Virtual Rosary", desc: "Pray the Rosary bead-by-bead through all four mystery sets with traditional meditations and Vatican-approved prayers.", accent: "#6b9fd4", cta: "Pray the Rosary" },
-  { href: "/memes", emoji: "😂", title: "Catholic Memes", desc: "Create uplifting, wholesome faith memes from Scripture and saint quotes — joyful humor that draws people to God (CCC 1832).", accent: "#7cc47f", cta: "Create a Meme" },
-  { href: "/saints", emoji: "📖", title: "Saint Timeline", desc: "Every saint result includes an interactive timeline of key life moments with personal reflections and short prayers for each event.", accent: "#c084fc", cta: "Coming in Results", soon: true },
-  { href: "/rosary", emoji: "🔥", title: "Prayer Streaks", desc: "Build consistent prayer habits with daily streak tracking for both the Rosary and the Saint Ally Builder.", accent: "#f97316", cta: "Track My Streak", soon: true },
+  { href: "/saints",  emoji: "⚔",  title: "Saint Match",    desc: "Receive a matched team of real patron saints with historically accurate backstories, virtues, and a custom novena prayer.", accent: "#d4a017", cta: "Find My Saints" },
+  { href: "/novenas", emoji: "🕯",  title: "Novenas",        desc: "Pray a powerful 9-day novena with guided daily reflections, Scripture, and intention tracking — walk with your patron saint.", accent: "#f0c040", cta: "Start a Novena" },
+  { href: "/rosary",  emoji: "📿",  title: "Virtual Rosary", desc: "Pray the Rosary bead-by-bead through all four mystery sets with traditional meditations and Vatican-approved prayers.", accent: "#6b9fd4", cta: "Pray the Rosary" },
+  { href: "/saints",  emoji: "📖",  title: "Saint Timeline", desc: "Every saint result includes an interactive timeline of key life moments with personal reflections and short prayers.", accent: "#c084fc", cta: "Coming in Results", soon: true },
+  { href: "/rosary",  emoji: "🔥",  title: "Prayer Streaks", desc: "Build consistent prayer habits with daily streak tracking for both the Rosary and the Saint Match Builder.", accent: "#f97316", cta: "Track My Streak", soon: true },
 ];
 
 const TRUST_POINTS = [
@@ -272,7 +285,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            {/* Right column – mock card */}
+            {/* Right column – enlarged mock card */}
             <div
               className="animate-fade-slide-up"
               style={{ display: "flex", justifyContent: "center", animationDelay: "0.3s" }}
@@ -334,7 +347,6 @@ export default function HomePage() {
                   }}>
                     {n}
                   </div>
-                  {/* Icon */}
                   <div style={{ fontSize: "1.6rem", marginBottom: "12px" }} aria-hidden="true">{icon}</div>
                   <h3 style={{ fontFamily: "Playfair Display, serif", fontSize: "1.25rem", fontWeight: 700, color: "var(--fg-primary)", marginBottom: "10px" }}>
                     {title}
@@ -504,6 +516,9 @@ export default function HomePage() {
             <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", justifyContent: "center" }}>
               <Link href="/saints" className="btn-gold" style={{ fontSize: "1rem", padding: "1rem 2.25rem" }}>
                 Find My Saints →
+              </Link>
+              <Link href="/novenas" className="btn-ghost" style={{ fontSize: "1rem" }}>
+                🕯 Start a Novena
               </Link>
               <Link href="/rosary" className="btn-ghost" style={{ fontSize: "1rem" }}>
                 📿 Pray the Rosary
