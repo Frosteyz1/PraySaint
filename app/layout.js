@@ -1,6 +1,7 @@
 import { Geist } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
+import BackgroundAnimation from "@/components/BackgroundAnimation";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 
@@ -28,9 +29,10 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className={`${geistSans.variable} antialiased min-h-screen flex flex-col`}
-        style={{ background: "var(--bg-page)", color: "var(--fg-primary)" }}>
+        style={{ background: "var(--bg-page)", color: "var(--fg-primary)", position: "relative" }}>
+        <BackgroundAnimation />
         <Nav />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1" style={{ position: "relative", zIndex: 1 }}>{children}</main>
         <footer className="relative overflow-hidden"
           style={{ background: "linear-gradient(to top, #040a1a, #080e26)", borderTop: "1px solid rgba(212,160,23,0.15)" }}>
           <div className="max-w-4xl mx-auto px-6 py-10 text-center">

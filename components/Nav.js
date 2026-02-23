@@ -23,6 +23,19 @@ function IconHalo({ active }) {
     </svg>
   );
 }
+function IconCandle({ active }) {
+  const c = active ? "#f0c040" : "currentColor";
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {/* Flame */}
+      <path d="M12 2c0 0-2 2.5-2 4.5a2 2 0 0 0 4 0C14 4.5 12 2 12 2z" fill={active ? "#f0c040" : "none"} strokeWidth="1.5"/>
+      {/* Candle body */}
+      <rect x="9" y="8" width="6" height="12" rx="1"/>
+      {/* Base */}
+      <path d="M7 20h10"/>
+    </svg>
+  );
+}
 function IconBeads({ active }) {
   const c = active ? "#f0c040" : "currentColor";
   return (
@@ -37,22 +50,12 @@ function IconBeads({ active }) {
     </svg>
   );
 }
-function IconSmile({ active }) {
-  const c = active ? "#f0c040" : "currentColor";
-  return (
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="9"/>
-      <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-      <circle cx="9"  cy="10" r="1" fill={c} stroke="none"/>
-      <circle cx="15" cy="10" r="1" fill={c} stroke="none"/>
-    </svg>
-  );
-}
 
 const links = [
-  { href: "/",       label: "Home",       Icon: IconHome  },
-  { href: "/saints", label: "Saint Ally", Icon: IconHalo  },
-  { href: "/rosary", label: "Rosary",     Icon: IconBeads },
+  { href: "/",        label: "Home",        Icon: IconHome   },
+  { href: "/saints",  label: "Saint Match", Icon: IconHalo   },
+  { href: "/novenas", label: "Novenas",     Icon: IconCandle },
+  { href: "/rosary",  label: "Rosary",      Icon: IconBeads  },
 ];
 
 export default function Nav() {
@@ -67,8 +70,8 @@ export default function Nav() {
   }, []);
 
   const navBg = scrolled
-    ? "rgba(8,14,38,0.92)"
-    : "rgba(8,14,38,0.82)";
+    ? "rgba(4,8,28,0.97)"
+    : "rgba(6,10,32,0.90)";
 
   return (
     <nav
@@ -76,14 +79,23 @@ export default function Nav() {
       className="sticky top-0 z-50 transition-all"
       style={{
         background: navBg,
-        backdropFilter: "blur(20px) saturate(1.4)",
-        WebkitBackdropFilter: "blur(20px) saturate(1.4)",
+        backdropFilter: "blur(24px) saturate(1.6)",
+        WebkitBackdropFilter: "blur(24px) saturate(1.6)",
         borderBottom: scrolled
-          ? "1px solid rgba(212,160,23,0.22)"
-          : "1px solid rgba(255,255,255,0.06)",
-        boxShadow: scrolled ? "0 4px 24px rgba(0,0,0,0.35)" : "none",
+          ? "1px solid rgba(212,160,23,0.30)"
+          : "1px solid rgba(212,160,23,0.15)",
+        boxShadow: scrolled
+          ? "0 4px 32px rgba(0,0,0,0.55), 0 1px 0 rgba(212,160,23,0.10) inset"
+          : "0 2px 16px rgba(0,0,0,0.35)",
       }}
     >
+      {/* Subtle top gold shimmer line */}
+      <div aria-hidden="true" style={{
+        position: "absolute", top: 0, left: 0, right: 0, height: "1px",
+        background: "linear-gradient(90deg, transparent 0%, rgba(212,160,23,0.5) 30%, rgba(240,192,64,0.8) 50%, rgba(212,160,23,0.5) 70%, transparent 100%)",
+        pointerEvents: "none",
+      }} />
+
       <div className="max-w-5xl mx-auto px-5 flex items-center justify-between h-[68px]">
         {/* Logo */}
         <Link
@@ -94,52 +106,66 @@ export default function Nav() {
           <span
             className="text-gold-400 transition-transform group-hover:scale-110"
             aria-hidden="true"
-            style={{ fontFamily: "Playfair Display, serif", fontSize: "1.45rem", filter: "drop-shadow(0 0 6px rgba(212,160,23,0.55))" }}
+            style={{
+              fontFamily: "Playfair Display, serif",
+              fontSize: "1.45rem",
+              filter: "drop-shadow(0 0 8px rgba(212,160,23,0.65)) drop-shadow(0 0 18px rgba(212,160,23,0.30))",
+            }}
           >
             ✝
           </span>
           <span
             className="font-bold text-gold-400"
-            style={{ fontFamily: "Playfair Display, serif", fontSize: "1.22rem", letterSpacing: "0.06em", textShadow: "0 0 16px rgba(212,160,23,0.35)" }}
+            style={{
+              fontFamily: "Playfair Display, serif",
+              fontSize: "1.22rem",
+              letterSpacing: "0.06em",
+              textShadow: "0 0 20px rgba(212,160,23,0.45), 0 0 40px rgba(212,160,23,0.20)",
+            }}
           >
             PraySaint
           </span>
         </Link>
 
         {/* Desktop links */}
-        <ul className="hidden sm:flex items-center gap-1.5" role="list">
+        <ul className="hidden sm:flex items-center gap-1" role="list">
           {links.map(({ href, label, Icon }) => {
-            const active = pathname === href;
+            const active = pathname === href || (href !== "/" && pathname.startsWith(href));
             return (
               <li key={href}>
                 <Link
                   href={href}
                   className="flex items-center gap-2 rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-gold-400"
                   style={{
-                    padding: "8px 16px",
-                    fontSize: "0.9rem",
+                    padding: "8px 14px",
+                    fontSize: "0.88rem",
                     fontWeight: active ? 700 : 600,
                     letterSpacing: "0.01em",
-                    color: active ? "#0a1428" : "rgba(240,232,213,0.82)",
+                    color: active ? "#0a1428" : "rgba(240,232,213,0.88)",
                     background: active
-                      ? "linear-gradient(135deg, #f0c040 0%, #d4a017 100%)"
+                      ? "linear-gradient(135deg, #f0c040 0%, #d4a017 60%, #b8860b 100%)"
                       : "transparent",
-                    boxShadow: active ? "0 2px 14px rgba(212,160,23,0.5), inset 0 1px 0 rgba(255,255,255,0.2)" : "none",
+                    boxShadow: active
+                      ? "0 2px 16px rgba(212,160,23,0.55), inset 0 1px 0 rgba(255,255,255,0.25)"
+                      : "none",
                     border: active ? "none" : "1px solid transparent",
                     textDecoration: "none",
+                    textShadow: active ? "0 1px 2px rgba(0,0,0,0.2)" : "none",
                   }}
                   onMouseEnter={(e) => {
                     if (!active) {
                       e.currentTarget.style.color = "#f0c040";
-                      e.currentTarget.style.background = "rgba(212,160,23,0.12)";
-                      e.currentTarget.style.border = "1px solid rgba(212,160,23,0.3)";
+                      e.currentTarget.style.background = "rgba(212,160,23,0.14)";
+                      e.currentTarget.style.border = "1px solid rgba(212,160,23,0.35)";
+                      e.currentTarget.style.boxShadow = "0 0 12px rgba(212,160,23,0.15)";
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (!active) {
-                      e.currentTarget.style.color = "rgba(240,232,213,0.82)";
+                      e.currentTarget.style.color = "rgba(240,232,213,0.88)";
                       e.currentTarget.style.background = "transparent";
                       e.currentTarget.style.border = "1px solid transparent";
+                      e.currentTarget.style.boxShadow = "none";
                     }
                   }}
                   aria-current={active ? "page" : undefined}
@@ -183,11 +209,11 @@ export default function Nav() {
         <div
           id="mobile-menu"
           className="sm:hidden border-t px-4 py-3"
-          style={{ borderColor: "rgba(212,160,23,0.18)", background: "rgba(4,9,26,0.97)" }}
+          style={{ borderColor: "rgba(212,160,23,0.20)", background: "rgba(4,8,28,0.99)" }}
         >
           <ul className="flex flex-col gap-1" role="list">
             {links.map(({ href, label, Icon }) => {
-              const active = pathname === href;
+              const active = pathname === href || (href !== "/" && pathname.startsWith(href));
               return (
                 <li key={href}>
                   <Link
