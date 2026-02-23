@@ -53,7 +53,6 @@ const links = [
   { href: "/",       label: "Home",       Icon: IconHome  },
   { href: "/saints", label: "Saint Ally", Icon: IconHalo  },
   { href: "/rosary", label: "Rosary",     Icon: IconBeads },
-  { href: "/memes",  label: "Memes",      Icon: IconSmile },
 ];
 
 export default function Nav() {
@@ -85,52 +84,68 @@ export default function Nav() {
         boxShadow: scrolled ? "0 4px 24px rgba(0,0,0,0.35)" : "none",
       }}
     >
-      <div className="max-w-5xl mx-auto px-5 flex items-center justify-between h-14">
+      <div className="max-w-5xl mx-auto px-5 flex items-center justify-between h-[68px]">
         {/* Logo */}
         <Link
           href="/"
-          aria-label="PatronForge — home"
-          className="flex items-center gap-2 group"
+          aria-label="PraySaint — home"
+          className="flex items-center gap-2.5 group"
         >
           <span
-            className="text-gold-400 text-lg transition-transform group-hover:scale-110"
+            className="text-gold-400 transition-transform group-hover:scale-110"
             aria-hidden="true"
-            style={{ fontFamily: "Playfair Display, serif" }}
+            style={{ fontFamily: "Playfair Display, serif", fontSize: "1.45rem", filter: "drop-shadow(0 0 6px rgba(212,160,23,0.55))" }}
           >
             ✝
           </span>
           <span
-            className="font-bold text-gold-400 tracking-wide text-[1.05rem]"
-            style={{ fontFamily: "Playfair Display, serif", letterSpacing: "0.05em" }}
+            className="font-bold text-gold-400"
+            style={{ fontFamily: "Playfair Display, serif", fontSize: "1.22rem", letterSpacing: "0.06em", textShadow: "0 0 16px rgba(212,160,23,0.35)" }}
           >
-            PatronForge
+            PraySaint
           </span>
         </Link>
 
         {/* Desktop links */}
-        <ul className="hidden sm:flex items-center gap-1" role="list">
+        <ul className="hidden sm:flex items-center gap-1.5" role="list">
           {links.map(({ href, label, Icon }) => {
             const active = pathname === href;
             return (
               <li key={href}>
                 <Link
                   href={href}
-                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-gold-400 ${
-                    active
-                      ? "text-gold-400 bg-white/8"
-                      : "text-cream-200 hover:text-gold-300 hover:bg-white/6"
-                  }`}
-                  style={{ color: active ? "#f0c040" : "rgba(240,232,213,0.85)" }}
+                  className="flex items-center gap-2 rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-gold-400"
+                  style={{
+                    padding: "8px 16px",
+                    fontSize: "0.9rem",
+                    fontWeight: active ? 700 : 600,
+                    letterSpacing: "0.01em",
+                    color: active ? "#0a1428" : "rgba(240,232,213,0.82)",
+                    background: active
+                      ? "linear-gradient(135deg, #f0c040 0%, #d4a017 100%)"
+                      : "transparent",
+                    boxShadow: active ? "0 2px 14px rgba(212,160,23,0.5), inset 0 1px 0 rgba(255,255,255,0.2)" : "none",
+                    border: active ? "none" : "1px solid transparent",
+                    textDecoration: "none",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!active) {
+                      e.currentTarget.style.color = "#f0c040";
+                      e.currentTarget.style.background = "rgba(212,160,23,0.12)";
+                      e.currentTarget.style.border = "1px solid rgba(212,160,23,0.3)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!active) {
+                      e.currentTarget.style.color = "rgba(240,232,213,0.82)";
+                      e.currentTarget.style.background = "transparent";
+                      e.currentTarget.style.border = "1px solid transparent";
+                    }
+                  }}
                   aria-current={active ? "page" : undefined}
                 >
                   <Icon active={active} />
                   {label}
-                  {active && (
-                    <span
-                      className="absolute bottom-0 left-3 right-3 h-0.5 rounded-full bg-gold-400"
-                      aria-hidden="true"
-                    />
-                  )}
                 </Link>
               </li>
             );

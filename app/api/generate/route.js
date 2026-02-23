@@ -8,7 +8,7 @@ const client = new Anthropic({
 });
 
 const MODEL = "claude-sonnet-4-6";
-const MAX_TOKENS = 2048;
+const MAX_TOKENS = 4000;
 
 // ─── System prompts ────────────────────────────────────────────────
 const SAINTS_SYSTEM = `You are a reverent Catholic theologian and hagiographer. Your task is to match real, historically verified patron saints to a user's life situation and produce a Catholic spiritual profile.
@@ -19,6 +19,7 @@ Rules:
 - Present saints as real individuals who intercede and model virtue (CCC 956).
 - Prayers must be theologically sound, reverent, and in the Catholic tradition.
 - Include accurate historical facts — feast days, patronages, symbols.
+- Include 4-5 key timeline events per saint (birth, conversion or key turning point, major work/miracle, death/martyrdom, canonization if known).
 - Output ONLY valid JSON (no markdown, no code fences).
 
 JSON format:
@@ -31,7 +32,15 @@ JSON format:
       "backstory": "string (2-3 sentences, historically accurate)",
       "symbols": ["string", "..."],
       "powers": ["string (virtue/patronage)", "..."],
-      "intercession": "string (how they intercede for this person)"
+      "intercession": "string (how they intercede for this person)",
+      "timeline": [
+        {
+          "year": "string (e.g., '1347' or '3rd century')",
+          "event": "string (key life moment, max 8 words)",
+          "reflection": "string (1-2 sentences connecting this moment to the user's situation)",
+          "prayer": "string (brief 1-sentence prayer, e.g., 'Lord, through this moment of...')"
+        }
+      ]
     }
   ],
   "teamPrayer": "string (a short novena-style prayer, 3-5 sentences, addressed to saints as intercessors to God)",
